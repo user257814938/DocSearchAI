@@ -1,0 +1,11 @@
+streamlit
+sentence-transformers
+faiss-cpu
+transformers
+torch
+PyMuPDF
+python-docx
+scikit-learn
+evaluate
+rouge_score
+watchdog
