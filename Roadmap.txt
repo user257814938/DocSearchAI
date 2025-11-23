@@ -1,4 +1,4 @@
-🗺️ Roadmap Architecture RAG : La Stack "Vision 2025" (Full Local)
+🗺️ Roadmap Architecture RAG : La Stack "VEV RAG" (Full Local)
 
 Ce document détaille l'architecture complète de votre pipeline RAG. Conçue pour une autonomie totale (Full Python / CPU), cette stack privilégie la performance, la robustesse et l'état de l'art technologique.
 
