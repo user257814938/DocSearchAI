@@ -1,0 +1,135 @@
+🗺️ Roadmap Architecture RAG : La Stack "Vision 2025" (Full Local)
+
+Ce document détaille l'architecture complète de votre pipeline RAG. Conçue pour une autonomie totale (Full Python / CPU), cette stack privilégie la performance, la robustesse et l'état de l'art technologique.
+
+🏗️ Phase 1 : Fondations & Ingestion de Données
+
+L'objectif est de garantir que seules des données propres et structurées entrent dans le système.
+
+1.1 Structure du Code (Squelette)
+
+Outils : Dataclasses (2018) + Pydantic (2017)
+
+Rôle :
+
+Utiliser Dataclasses pour la rapidité des objets internes (standard Python 3.7+).
+
+Utiliser Pydantic pour valider strictement les entrées/sorties et éviter les erreurs silencieuses.
+
+1.2 Ingestion de Documents (Universal Loader)
+
+Outil : Docling (IBM, 2024)
+
+Rôle : Remplacer les vieux extracteurs par une IA capable de lire la mise en page. Il convertit PDF, DOCX et PPTX en Markdown structuré (titres, tableaux, listes), essentiel pour que le LLM comprenne la hiérarchie.
+
+1.3 Extraction Web (Connecteur Internet)
+
+Outil : Trafilatura (2019) + BeautifulSoup4 (2004)
+
+Alternative Connectée : Jina Reader (2024)
+
+Rôle : Scraper le web proprement (offline avec Trafilatura, via API avec Jina) en supprimant les pubs et menus pour ne garder que le texte utile.
+
+1.4 Normalisation (Hygiène des Données)
+
+Outils : ftfy (2012) + Clean-text (2019)
+
+Rôle : "Fix Text For You" répare automatiquement les erreurs d'encodage (mojibake), tandis que Clean-text supprime le bruit (emails, numéros, symboles inutiles).
+
+1.5 Nettoyage Linguistique
+
+Outils : Spacy (2015) + Regex
+
+Rôle : Segmenter le texte en phrases grammaticalement correctes. Spacy reste le moteur linguistique le plus rapide et robuste sur CPU.
+
+⚙️ Phase 2 : Traitement & Indexation
+
+Transformer le texte en connaissances mathématiques exploitables.
+
+2.1 Chunking (Segmentation Intelligente)
+
+Stratégie : Semantic Chunking (2023)
+
+Rôle : Au lieu de couper arbitrairement tous les 500 caractères, on coupe le texte quand le sens change (calculé via embeddings). Cela garantit des contextes cohérents.
+
+2.2 Vectorisation (Embeddings)
+
+Modèle : FastEmbed (ONNX) (2023) + BGE-M3 (2024)
+
+Rôle :
+
+BGE-M3 est le modèle État de l'Art (SOTA) pour le multilingue et les contextes longs.
+
+FastEmbed permet de le faire tourner sans PyTorch, divisant par deux le temps de démarrage et la consommation mémoire.
+
+2.3 Stockage Vectoriel (Cerveau Long-Terme)
+
+Base de Données : LanceDB (2023)
+
+Rôle : Base de données "Serverless" qui stocke sur le disque dur. Elle gère nativement :
+
+Les vecteurs.
+
+Les métadonnées.
+
+La recherche hybride (Mots-clés + Sens).
+
+🔍 Phase 3 : Pipeline de Recherche (Query Engine)
+
+Comprendre la question et trouver la meilleure réponse, vite.
+
+3.1 Cache Sémantique (Accélérateur)
+
+Outil : GPTCache (2023)
+
+Rôle : Intercepte la question avant tout calcul. Si une question similaire a déjà été posée, il renvoie la réponse stockée instantanément (0ms de latence).
+
+3.2 Transformation de Requête (Query Expansion)
+
+Stratégie : HyDE (2022) ou Multi-Query (2023)
+
+Rôle : Le LLM réécrit la question utilisateur pour l'optimiser pour le moteur de recherche (ex: transforme un mot-clé vague en une question précise).
+
+3.3 Stratégie de Recherche (Retrieval)
+
+Méthode : Hybrid Native (LanceDB)
+
+Rôle : Combine la recherche par mots-clés (FTS/BM25) pour la précision exacte et la recherche vectorielle pour le sens global.
+
+3.4 Reranking (Raffinement)
+
+Modèle : MXBai Rerank v2 (2024)
+
+Rôle : Réorganise les 10 ou 20 documents trouvés pour ne garder que le Top-5 le plus pertinent. C'est l'étape cruciale pour la précision finale.
+
+🧠 Phase 4 : Intelligence & Génération
+
+Produire la réponse finale.
+
+4.1 Optimisation Matérielle
+
+Format : GGUF Quantization (2023)
+
+Rôle : Compresser le modèle pour qu'il tienne dans la RAM d'un ordinateur standard sans perdre en intelligence (via llama.cpp).
+
+4.2 LLM (Le Cerveau)
+
+Modèle : Qwen 2.5 3B (Instruct) (Sept. 2024)
+
+Rôle : Le modèle de langage qui lit les documents trouvés et rédige la réponse. Qwen 2.5 est actuellement le meilleur modèle compact (< 7B) du marché.
+
+🛡️ Phase 5 : Contrôle Qualité & Maintenance
+
+S'assurer que le système ne ment pas.
+
+5.1 Évaluation Continue
+
+Framework : RAGAS (2023)
+
+Rôle : Calcule automatiquement des scores de performance :
+
+Faithfulness (Fidélité aux sources).
+
+Answer Relevancy (Pertinence de la réponse).
+
+Context Precision (Qualité des documents trouvés).
