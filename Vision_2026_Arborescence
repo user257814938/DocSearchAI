@@ -1,0 +1,65 @@
+📂 Arborescence du Projet RAG "Vision 2025"
+
+rag_project_2025/
+│
+├── 📁 data/                        # Stockage des données (exclu du Git via .gitignore)
+│   ├── 📁 raw/                     # Documents bruts (PDF, DOCX) déposés ici
+│   ├── 📁 processed/               # Fichiers Markdown intermédiaires (sortie Docling)
+│   └── 📁 lancedb/                 # La base de données vectorielle (fichiers .lance)
+│
+├── 📁 models/                      # Modèles IA locaux (GGUF, ONNX)
+│   ├── 📁 llm/                     # ex: qwen2.5-3b-instruct-q4_k_m.gguf
+│   └── 📁 embeddings/              # Cache FastEmbed / BGE-M3 (géré auto, mais bon à savoir)
+│
+├── 📁 src/                         # Code source de l'application
+│   ├── __init__.py
+│   ├── 📁 core/                    # Configuration et types de base
+│   │   ├── config.py               # Paramètres (chemins, noms modèles)
+│   │   └── schemas.py              # Classes Pydantic (Document, Chunk, SearchResult)
+│   │
+│   ├── 📁 ingestion/               # Phase 1 : Entrée des données
+│   │   ├── loader_doc.py           # Logique Docling (PDF/Word -> MD)
+│   │   ├── loader_web.py           # Logique Trafilatura (URL -> Txt)
+│   │   └── cleaner.py              # ftfy + regex + spacy (Normalisation)
+│   │
+│   ├── 📁 indexing/                # Phase 2 : Vectorisation
+│   │   ├── chunker.py              # Semantic Chunking logic
+│   │   ├── embedder.py             # Wrapper FastEmbed + BGE-M3
+│   │   └── vector_store.py         # Gestion LanceDB (create table, add, search)
+│   │
+│   ├── 📁 retrieval/               # Phase 3 : Recherche
+│   │   ├── cache.py                # Logique GPTCache
+│   │   ├── query_expansion.py      # Logique HyDE / Multi-Query
+│   │   └── reranker.py             # Logique MXBai V2
+│   │
+│   ├── 📁 generation/              # Phase 4 : LLM
+│   │   ├── llm_engine.py           # Chargement Llama.cpp / Qwen
+│   │   └── prompts.py              # Templates de prompts (Système, User)
+│   │
+│   └── 📁 evaluation/              # Phase 5 : Tests
+│       └── ragas_eval.py           # Script d'évaluation RAGAS
+│
+├── 📁 tests/                       # Tests unitaires classiques (pytest)
+│   ├── test_ingestion.py
+│   └── test_retrieval.py
+│
+├── .env                            # Variables d'environnement (API keys si besoin, configs)
+├── .gitignore                      # Ignorer data/, models/, .env, __pycache__
+├── main.py                         # Point d'entrée CLI (pour lancer l'ingestion ou le chat terminal)
+├── app.py                          # Interface Streamlit ou FastAPI
+└── requirements.txt                # Liste des dépendances (docling, lancedb, fastembed, etc.)
+
+
+💡 Pourquoi cette structure ?
+
+Séparation des responsabilités (src/) :
+
+Chaque dossier correspond à une étape de votre tableau comparatif. Si vous voulez changer de modèle d'embedding, vous touchez uniquement à src/indexing/embedder.py. Le reste du code ne bouge pas.
+
+Gestion des données (data/ et models/) :
+
+On sépare clairement le code des gros fichiers binaires (GGUF, Index LanceDB) pour ne pas polluer votre gestionnaire de version (Git).
+
+Typage centralisé (core/schemas.py) :
+
+C'est ici que vous définirez vos objets Dataclass ou Pydantic. Tous les modules importeront ces définitions pour garantir qu'un "Document" a toujours la même forme du début à la fin.
