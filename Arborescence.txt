@@ -1,6 +1,6 @@
-📂 Arborescence du Projet RAG "Vision 2025"
+📂 Arborescence du Projet "VEV RAG"
 
-rag_project_2025/
+vev_rag/
 │
 ├── 📁 data/                        # Stockage des données (exclu du Git via .gitignore)
 │   ├── 📁 raw/                     # Documents bruts (PDF, DOCX) déposés ici
@@ -47,7 +47,8 @@ rag_project_2025/
 ├── .gitignore                      # Ignorer data/, models/, .env, __pycache__
 ├── main.py                         # Point d'entrée CLI (pour lancer l'ingestion ou le chat terminal)
 ├── app.py                          # Interface Streamlit ou FastAPI
-└── requirements.txt                # Liste des dépendances (docling, lancedb, fastembed, etc.)
+├── requirements.txt                # Liste des dépendances (docling, lancedb, fastembed, etc.)
+└── README.md                       # Documentation du projet VEV
 
 
 💡 Pourquoi cette structure ?
