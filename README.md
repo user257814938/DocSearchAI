@@ -1,4 +1,4 @@
-# PSTB-DI-Bootcamp_Hackathon_2
+![Chat Interface](Chat.png)
 
 CPU-optimized document ingestion, search, and summarization tool.
 
